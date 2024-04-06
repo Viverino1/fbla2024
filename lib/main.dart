@@ -1,20 +1,31 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fbla2024/app_colors.dart';
-import 'package:fbla2024/pages/feed_page.dart';
+import 'package:fbla2024/pages/comment_section.dart';
 import 'package:fbla2024/pages/home_page.dart';
-import 'package:fbla2024/pages/portfolio_page.dart';
+import 'package:fbla2024/services/firebase/auth_service.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.ios,
+    options: DefaultFirebaseOptions.currentPlatform,
   );
+  
+  final CollectionReference notes = FirebaseFirestore.instance.collection("notes");
+
+  notes.add({
+    "note" : "yipee",
+  });
+  //FirebaseFirestore db = FirebaseFirestore.instance;
+  // db.collection("users").add({
+  //   "first" : "adda"
+  // });
+  //db.collection("users").doc("O9NepT2wCG25Jz43VQCp").get().then((value) => print(value));
 }
 
 const backgroundColor = Color.fromARGB(255, 34, 34, 34);
@@ -31,8 +42,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: const HomePage(),
       routes: {
-        '/home': (context) => const FeedPage(),
-        '/portfolio': (context) => const PortfolioPage()
+        '/home': (context) => const HomePage(),
+        '/view-profile': (context) => const Scaffold(),
+        '/comment-section': (context) => const CommentSection(postID: ""),
       },
     );
   }

@@ -25,12 +25,12 @@ ThemeData darkMode = ThemeData(
         fontSize: 22,
       ),
       titleMedium: GoogleFonts.quicksand(
-        fontSize: 18,
-        fontWeight: FontWeight.w700,
+        fontSize: 16,
+        fontWeight: FontWeight.w800,
       ),
       titleSmall: GoogleFonts.quicksand(
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
           color: AppColors.gray
       ),
     ),

@@ -12,7 +12,12 @@
           "package_name": "com.example.fbla2024"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "39055464779-lpnn5i3rup5fn0r7q3a5rm9lc07k1393.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDY384L9FVLNmJ0l_C_boqGywbocGwES6M"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "39055464779-06e8f8v3kkenivjl1hh2vbacob765ka4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "39055464779-5d96umsedf80rtot5chd6pti97jf2hmo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.fbla2024.RunnerTests"
+              }
+            }
+          ]
         }
       }
     }

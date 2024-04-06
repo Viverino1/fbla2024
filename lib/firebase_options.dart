@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -28,10 +25,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -49,6 +43,16 @@ class DefaultFirebaseOptions {
     }
   }
 
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyB7M7h-Ok105TSkwXpyoPcTnxSbScwxSN4',
+    appId: '1:39055464779:web:c3a9bd5a475609578af0ce',
+    messagingSenderId: '39055464779',
+    projectId: 'fbla-mobile-app-2024',
+    authDomain: 'fbla-mobile-app-2024.firebaseapp.com',
+    storageBucket: 'fbla-mobile-app-2024.appspot.com',
+    measurementId: 'G-M9EBYYJ936',
+  );
+
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDY384L9FVLNmJ0l_C_boqGywbocGwES6M',
     appId: '1:39055464779:android:cbb2fc72b6483af68af0ce',
@@ -63,6 +67,17 @@ class DefaultFirebaseOptions {
     messagingSenderId: '39055464779',
     projectId: 'fbla-mobile-app-2024',
     storageBucket: 'fbla-mobile-app-2024.appspot.com',
+    iosClientId: '39055464779-gk87lcfh1ma3dgjrtpfsd2q6q61q16jj.apps.googleusercontent.com',
     iosBundleId: 'com.example.fbla2024',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyBvv_5BaPx9WVBmQfjpT8qD8Tc7vLj413k',
+    appId: '1:39055464779:ios:f80117e2f020919b8af0ce',
+    messagingSenderId: '39055464779',
+    projectId: 'fbla-mobile-app-2024',
+    storageBucket: 'fbla-mobile-app-2024.appspot.com',
+    iosClientId: '39055464779-5d96umsedf80rtot5chd6pti97jf2hmo.apps.googleusercontent.com',
+    iosBundleId: 'com.example.fbla2024.RunnerTests',
   );
 }
