@@ -32,10 +32,29 @@ class Post extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Title(),
-                      Text(
-                        "Competition",
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Competition",
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                          SizedBox(width: 8,),
+                          Container(
+                            height: 4,
+                            width: 4,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.secondary,
+                              borderRadius: BorderRadius.circular(10)
+                            ),
+                          ),
+                          SizedBox(width: 8,),
+                          Text(
+                            "2/14/24",
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                        ],
+                      )
                     ],
                   ),
                 )

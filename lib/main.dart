@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
@@ -15,17 +16,6 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  
-  final CollectionReference notes = FirebaseFirestore.instance.collection("notes");
-
-  notes.add({
-    "note" : "yipee",
-  });
-  //FirebaseFirestore db = FirebaseFirestore.instance;
-  // db.collection("users").add({
-  //   "first" : "adda"
-  // });
-  //db.collection("users").doc("O9NepT2wCG25Jz43VQCp").get().then((value) => print(value));
 }
 
 const backgroundColor = Color.fromARGB(255, 34, 34, 34);

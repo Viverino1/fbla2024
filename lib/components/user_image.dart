@@ -16,7 +16,8 @@ class _UserImageState extends State<UserImage> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => {
-        //User.fromId("UnYuiEEJtQVtq9I64oXXfMw1iIR2")
+        //User.fromId("UnYuiEEJtQVtq9I64oXXfMw1iIR2").then((value) => print(value?.following))
+        //Post.fromId("GJSwZ5HDrKvmfxH7wmQV").then((value) => print(value?.comments[0].replies[0].content))
       },
       child: Container(
         decoration: BoxDecoration(
@@ -33,7 +34,7 @@ class _UserImageState extends State<UserImage> {
             width: 25,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(25),
-                image: DecorationImage(
+                image: const DecorationImage(
                   fit: BoxFit.cover,
                   alignment: FractionalOffset.center,
                   image: NetworkImage("https://lh3.googleusercontent.com/-BAwkfezzhGg/AAAAAAAAAAI/AAAAAAAAAAA/ALKGfkn60m1utIJdMBBA7o4lazI1fGnHDQ/s128-c/photo.jpg"),
