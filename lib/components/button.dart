@@ -15,10 +15,10 @@ class Button extends StatelessWidget {
       onTap: onTap,
       child: Container(
         height: 30,
-        width: 115,
+        width: 130,
         decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.secondary,
-            borderRadius: BorderRadius.circular(8)
+            borderRadius: BorderRadius.circular(20)
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

@@ -12,7 +12,6 @@ import '../components/nav_bar.dart';
 
 class FeedPage extends StatelessWidget {
   const FeedPage({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,13 +40,6 @@ class FeedPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Post(
-                urls: [
-                  "https://t3.ftcdn.net/jpg/03/15/34/90/360_F_315349043_6ohfFyx37AFusCKZtGQtJR0jqUxhb25Y.jpg",
-                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8fFYdAr0gsHFnjVe6zxn8tZDjCY8mKGw78ttP2NYmUvmL-mP5-0C8nVu0pwprLZ037eo&usqp=CAU",
-                  "https://burst.shopifycdn.com/photos/hiker-looks-up-at-vertical-mountain-peaks.jpg?width=1000&format=pjpg&exif=0&iptc=0",
-                ]
-            ),
           ],
         ),
       )

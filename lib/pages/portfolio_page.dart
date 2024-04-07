@@ -1,17 +1,25 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:fbla2024/components/loading.dart';
 import 'package:fbla2024/components/post.dart';
+import 'package:fbla2024/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../components/button.dart';
-import '../components/nav_bar.dart';
+import 'package:fbla2024/services/firebase/firestore/db.dart';
 
-class PortfolioPage extends StatelessWidget {
+class PortfolioPage extends StatefulWidget {
   const PortfolioPage({super.key});
+
+  @override
+  State<PortfolioPage> createState() => _PortfolioPageState();
+}
+
+class _PortfolioPageState extends State<PortfolioPage> {
+  final Future<List<String>> _postIDs = FirestoreService.getUserPostIDs(currentUser.uid);
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +38,7 @@ class PortfolioPage extends StatelessWidget {
           child: Row(
             children: [
               Text(
-                'Vivek Maddineni',
+                "Your Profile",
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               Spacer(),
@@ -81,9 +89,9 @@ class PortfolioPage extends StatelessWidget {
                   ),
                 ),
               ),
-              Text("Vivek Maddineni", style: Theme.of(context).textTheme.titleMedium, softWrap: true,),
-              Text("Lafayette High School", style: Theme.of(context).textTheme.titleSmall, softWrap: true,),
-              Text("Class of 2026", style: Theme.of(context).textTheme.titleSmall, softWrap: true,),
+              Text(currentUser.fullName, style: Theme.of(context).textTheme.titleMedium, softWrap: true,),
+              Text(currentUser.school, style: Theme.of(context).textTheme.titleSmall, softWrap: true,),
+              Text("Class of " + currentUser.gradYear.toString(), style: Theme.of(context).textTheme.titleSmall, softWrap: true,),
               SizedBox(height: 16,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -93,12 +101,26 @@ class PortfolioPage extends StatelessWidget {
                     text: "Network",
                     onTap: () => {},
                   ),
+                  Container(
+                    height: 30,
+                    width: 30,
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.secondary,
+                        borderRadius: BorderRadius.circular(30)
+                    ),
+                    child: Icon(
+                      Icons.question_mark,
+                      size: 20,
+                      color: Theme.of(context).colorScheme.background,
+                    ),
+                  ),
                   Button(
                     icon: Icons.school,
                     text: "Academics",
                     onTap: () => {},
                     iconSize: 18,
                   ),
+
                 ],
               ),
               SizedBox(height: 16,),
@@ -114,16 +136,22 @@ class PortfolioPage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 12,),
-              Post(urls: [
-                "https://t3.ftcdn.net/jpg/03/15/34/90/360_F_315349043_6ohfFyx37AFusCKZtGQtJR0jqUxhb25Y.jpg",
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8fFYdAr0gsHFnjVe6zxn8tZDjCY8mKGw78ttP2NYmUvmL-mP5-0C8nVu0pwprLZ037eo&usqp=CAU",
-                "https://burst.shopifycdn.com/photos/hiker-looks-up-at-vertical-mountain-peaks.jpg?width=1000&format=pjpg&exif=0&iptc=0"
-              ]),
-              Post(urls: [
-                "https://t3.ftcdn.net/jpg/03/15/34/90/360_F_315349043_6ohfFyx37AFusCKZtGQtJR0jqUxhb25Y.jpg",
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8fFYdAr0gsHFnjVe6zxn8tZDjCY8mKGw78ttP2NYmUvmL-mP5-0C8nVu0pwprLZ037eo&usqp=CAU",
-                "https://burst.shopifycdn.com/photos/hiker-looks-up-at-vertical-mountain-peaks.jpg?width=1000&format=pjpg&exif=0&iptc=0"
-              ])
+              FutureBuilder<List<String>>(
+                  future: _postIDs,
+                  builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot){
+                    List<Widget> children;
+                    if(snapshot.hasData){
+                      children = snapshot.data?.map((e) => Post(id: e,)).toList()?? [];
+                    }else{
+                      children = <Widget>[
+                        Loading("Posts"),
+                      ];
+                    }
+                    return Column(
+                      children: children,
+                    );
+                  }
+              )
             ],
           ),
         ),

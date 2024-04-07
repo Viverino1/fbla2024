@@ -70,7 +70,7 @@ class _CommentState extends State<Comment> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          UserImage(uid: ""),
+          UserImage(uid: "",),
           SizedBox(width: 8,),
           Flexible(
             child: GestureDetector(
@@ -141,7 +141,7 @@ class _ReplyState extends State<Reply> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        UserImage(uid: ""),
+        UserImage(uid: "",),
         SizedBox(width: 8,),
         Flexible(
           child: GestureDetector(

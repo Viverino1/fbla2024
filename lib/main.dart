@@ -3,11 +3,14 @@ import 'package:fbla2024/app_colors.dart';
 import 'package:fbla2024/pages/comment_section.dart';
 import 'package:fbla2024/pages/home_page.dart';
 import 'package:fbla2024/services/firebase/auth_service.dart';
+import 'package:fbla2024/services/firebase/firestore/db.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
+UserData currentUser = UserData.empty();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +19,11 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  final fbu = FirebaseAuth.instance.currentUser;
+  if(fbu != null){
+    currentUser = (await UserData.fromId(fbu.uid))!;
+  }
 }
 
 const backgroundColor = Color.fromARGB(255, 34, 34, 34);

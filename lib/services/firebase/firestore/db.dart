@@ -1,8 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fbla2024/main.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 FirebaseFirestore db = FirebaseFirestore.instance;
 
-class User {
+const Source source = Source.cache;
+
+class UserData {
   int dob = 0;
   String firstName = "";
   String lastName = "";
@@ -16,10 +20,11 @@ class User {
   int sat = 0;
   String uid = "";
   String school = "";
+  String fullName = "";
   List<String> following = [];
   //List<String> followers = [];
 
-  User({
+  UserData({
     required this.dob,
     required this.firstName,
     required this.lastName,
@@ -34,15 +39,18 @@ class User {
     required this.uid,
     required this.school,
     required this.following,
+    required this.fullName,
     //required this.followers,
   });
 
-  factory User.fromFirestore(
+  UserData.empty();
+
+  factory UserData.fromFirestore(
       DocumentSnapshot<Map<String, dynamic>> snapshot,
       SnapshotOptions? options,
       ) {
     final data = snapshot.data();
-    return User(
+    return UserData(
       dob: data?['dob'],
       firstName: data?['firstName'],
       lastName: data?['lastName'],
@@ -56,6 +64,7 @@ class User {
       psat: data?['psat'],
       uid: snapshot.id,
       school: data?['school'],
+      fullName: data?['firstName'] + " " + data?['lastName'],
       following: List.from(data?['following']),
     );
   }
@@ -78,28 +87,33 @@ class User {
     };
   }
 
-  static Future<User?> fromId(String uid) async{
+  static Future<UserData?> fromId(String uid) async{
     final ref = db.collection("users").doc(uid).withConverter(
-      fromFirestore: User.fromFirestore,
-      toFirestore: (User user, _) => user.toFirestore(),
+      fromFirestore: UserData.fromFirestore,
+      toFirestore: (UserData user, _) => user.toFirestore(),
     );
-    var docSnap = await ref.get();
+    var docSnap = await ref.get(GetOptions(source: source));
     final user = docSnap.data(); // Convert to User object
     return user;
   }
 }
 
-class Post{
+class PostData{
   String id = "";
   String description = "";
-  int likes = 0;
+  List<String> likes = [];
   int postTime = 0;
   String title = "";
+  String uid = "";
   String type = "";
-  List<String> urls;
-  List<Comment> comments;
+  UserData user = UserData.empty();
+  List<String> urls = [];
+  List<Comment> comments = [];
 
-  Post({
+  void Function() like;
+  void Function() unLike;
+
+  PostData({
     required this.description,
     required this.postTime,
     required this.title,
@@ -108,22 +122,30 @@ class Post{
     required this.likes,
     required this.id,
     required this.comments,
+    required this.uid,
+    required this.user,
+    required this.like,
+    required this.unLike,
   });
 
-  factory Post.fromFirestore(
+  factory PostData.fromFirestore(
       DocumentSnapshot<Map<String, dynamic>> snapshot,
       SnapshotOptions? options,
       ) {
     final data = snapshot.data();
-    return Post(
+    return PostData(
       description: data?['description'],
-      likes: data?['likes'],
+      likes: List.from(data?['likes']),
       postTime: data?['postTime'],
       title: data?['title'],
       type: data?['type'],
+      uid: data?['uid'],
       urls: List.from(data?['urls']),
       id: snapshot.id,
       comments: [],
+      user: UserData.empty(),
+      like: () => {},
+        unLike: () => {}
     );
   }
 
@@ -135,18 +157,19 @@ class Post{
       "title": title,
       "type": type,
       "urls": urls,
+      "uid": uid,
     };
   }
 
-  static Future<Post?> fromId(String id) async{
+  static Future<PostData?> fromId(String id) async{
     final ref = db.collection("posts").doc(id).withConverter(
-      fromFirestore: Post.fromFirestore,
-      toFirestore: (Post post, _) => post.toFirestore(),
+      fromFirestore: PostData.fromFirestore,
+      toFirestore: (PostData post, _) => post.toFirestore(),
     );
-    var docSnap = await ref.get();
+    var docSnap = await ref.get(GetOptions(source: source));
     final post = docSnap.data(); // Convert to User object
 
-    QuerySnapshot querySnapshot = await ref.collection("comments").get();
+    QuerySnapshot querySnapshot = await ref.collection("comments").get(GetOptions(source: source));
 
     for(var i = 0; i < querySnapshot.docs.length; i++){
       Comment? comment = await Comment.fromId(id, querySnapshot.docs[i].id);
@@ -154,6 +177,16 @@ class Post{
         post?.comments.add(comment);
       }
     }
+
+    post?.user = (await UserData.fromId(post.uid))!;
+
+    post?.like = () async {
+      await ref.update({ 'likes': FieldValue.arrayUnion([currentUser.uid]) });
+    };
+
+    post?.unLike = () async {
+      await ref.update({ 'likes': FieldValue.arrayRemove([currentUser.uid]) });
+    };
 
     return post;
   }
@@ -202,10 +235,10 @@ class Comment{
       fromFirestore: Comment.fromFirestore,
       toFirestore: (Comment comment, _) => comment.toFirestore(),
     );
-    var docSnap = await ref.get();
+    var docSnap = await ref.get(GetOptions(source: source));
     final comment = docSnap.data(); // Convert to User object
 
-    QuerySnapshot querySnapshot = await ref.collection("replies").get();
+    QuerySnapshot querySnapshot = await ref.collection("replies").get(GetOptions(source: source));
 
     for(var i = 0; i < querySnapshot.docs.length; i++){
       Reply? reply = await Reply.fromId(postID, commentID, querySnapshot.docs[i].id);
@@ -253,8 +286,15 @@ class Reply{
       fromFirestore: Reply.fromFirestore,
       toFirestore: (Reply comment, _) => comment.toFirestore(),
     );
-    var docSnap = await ref.get();
+    var docSnap = await ref.get(GetOptions(source: source));
     final reply = docSnap.data(); // Convert to User object
     return reply;
+  }
+}
+
+class FirestoreService{
+  static Future<List<String>> getUserPostIDs(String uid) async{
+    final querySnap = await db.collection("posts").where("uid", isEqualTo: uid).get(GetOptions(source: source));
+    return querySnap.docs.map((e) => e.id).toList();
   }
 }

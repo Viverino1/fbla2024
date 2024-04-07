@@ -42,6 +42,7 @@ dependencies:
   firebase_auth: ^4.19.0
   google_sign_in: ^6.2.1
   cloud_firestore: ^4.16.0
+  loading_animation_widget:
 
 dev_dependencies:
   flutter_test:
