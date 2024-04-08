@@ -1,3 +1,4 @@
+import 'package:fbla2024/components/loading.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -26,6 +27,16 @@ class UserImage extends StatelessWidget {
           child: FutureBuilder(
             future: UserData.fromId(uid),
             builder: (BuildContext context, AsyncSnapshot<UserData?> snapshot){
+              if(!snapshot.hasData){
+                return Container(
+                  height: 25,
+                  width: 25,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(25),
+
+                  ),
+                );
+              }
               return Container(
                 height: 25,
                 width: 25,

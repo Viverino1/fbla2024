@@ -1,5 +1,6 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:fbla2024/components/loading.dart';
 import 'package:fbla2024/components/user_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,11 +8,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import '../components/button.dart';
+import '../services/firebase/firestore/db.dart';
 
 class CommentSection extends StatelessWidget {
-  const CommentSection({super.key, required this.postID});
+  const CommentSection({super.key, required this.comments});
 
-  final String postID;
+  final List<CommentData> comments;
 
   @override
   Widget build(BuildContext context) {
@@ -39,22 +41,15 @@ class CommentSection extends StatelessWidget {
         toolbarHeight: 40,
       ),
       body: Column(
-        children: [
-          Comment(
-            replies: [
-              Reply(),
-              Reply()
-            ],
-          ),
-        ],
+        children: comments.map((e) => Comment(data: e,)).toList()
       ),
     );
   }
 }
 
 class Comment extends StatefulWidget {
-  final List<Reply> replies;
-  const Comment({super.key, required this.replies});
+  final CommentData data;
+  const Comment({super.key, required this.data});
 
   @override
   State<Comment> createState() => _CommentState();
@@ -70,7 +65,7 @@ class _CommentState extends State<Comment> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          UserImage(uid: "",),
+          UserImage(uid: widget.data.uid,),
           SizedBox(width: 8,),
           Flexible(
             child: GestureDetector(
@@ -87,7 +82,7 @@ class _CommentState extends State<Comment> {
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   Text(
-                    "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.",
+                    widget.data.content,
                     style: Theme.of(context).textTheme.titleSmall,
                     maxLines: _isExpanded? 9999999999 : 3,
                     overflow: TextOverflow.ellipsis,
@@ -96,26 +91,61 @@ class _CommentState extends State<Comment> {
                   SizedBox(height: 4,),
                   Row(
                     children: [
-                      Row(
-                        children: [
-                          Icon(Icons.favorite, color: Theme.of(context).colorScheme.secondary, size: 16,),
-                          SizedBox(width: 4,),
-                          Text("127 likes", style: Theme.of(context).textTheme.titleSmall,),
-                        ],
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.secondary.withOpacity(0.25),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          child: Row(
+                            children: [
+                              Icon(Icons.favorite_border, color: Theme.of(context).colorScheme.secondary, size: 16,),
+                              SizedBox(width: 4,),
+                              Text(widget.data.likes.length.toString() + " Likes", style: Theme.of(context).textTheme.titleSmall,),
+                            ],
+                          ),
+                        ),
                       ),
                       SizedBox(width: 8,),
-                      Row(
-                        children: [
-                          Icon(Icons.reply, color: Theme.of(context).colorScheme.secondary, size: 16,),
-                          SizedBox(width: 4,),
-                          Text("2 replies", style: Theme.of(context).textTheme.titleSmall,),
-                        ],
-                      )
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.secondary.withOpacity(0.25),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          child: Row(
+                            children: [
+                              Icon(Icons.reply, color: Theme.of(context).colorScheme.secondary, size: 16,),
+                              SizedBox(width: 4,),
+                              Text(widget.data.replies.length.toString() + " Replies", style: Theme.of(context).textTheme.titleSmall,),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 8,),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.secondary.withOpacity(0.25),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          child: Row(
+                            children: [
+                              Icon(Icons.delete, color: Theme.of(context).colorScheme.secondary, size: 16,),
+                              SizedBox(width: 4,),
+                              Text("Delete", style: Theme.of(context).textTheme.titleSmall,),
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                   SizedBox(height: 8,),
                   Column(
-                    children: widget.replies,
+                    children: widget.data.replies.map((e) => Reply(data: e,)).toList(),
                   )
                 ],
               ),
@@ -128,7 +158,8 @@ class _CommentState extends State<Comment> {
 }
 
 class Reply extends StatefulWidget {
-  const Reply({super.key});
+  const Reply({super.key, required this.data});
+  final ReplyData data;
 
   @override
   State<Reply> createState() => _ReplyState();
@@ -141,7 +172,7 @@ class _ReplyState extends State<Reply> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        UserImage(uid: "",),
+        UserImage(uid: widget.data.uid,),
         SizedBox(width: 8,),
         Flexible(
           child: GestureDetector(
@@ -158,7 +189,7 @@ class _ReplyState extends State<Reply> {
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 Text(
-                  "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.",
+                  widget.data.content,
                   style: Theme.of(context).textTheme.titleSmall,
                   maxLines: _isExpanded? 9999999999 : 3,
                   overflow: TextOverflow.ellipsis,

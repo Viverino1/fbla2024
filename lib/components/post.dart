@@ -96,7 +96,7 @@ class _PostState extends State<Post> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => CommentSection(postID: data.id,),
+                                builder: (context) => CommentSection(comments: data.comments,),
                               ),
                             );
                           },

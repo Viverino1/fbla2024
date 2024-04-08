@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/home': (context) => const HomePage(),
         '/view-profile': (context) => const Scaffold(),
-        '/comment-section': (context) => const CommentSection(postID: ""),
+        '/comment-section': (context) => const CommentSection(comments: []),
       },
     );
   }

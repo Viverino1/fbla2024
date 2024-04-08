@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 FirebaseFirestore db = FirebaseFirestore.instance;
 
-const Source source = Source.cache;
+const Source source = Source.server;
 
 class UserData {
   int dob = 0;
@@ -108,7 +108,7 @@ class PostData{
   String type = "";
   UserData user = UserData.empty();
   List<String> urls = [];
-  List<Comment> comments = [];
+  List<CommentData> comments = [];
 
   void Function() like;
   void Function() unLike;
@@ -172,7 +172,7 @@ class PostData{
     QuerySnapshot querySnapshot = await ref.collection("comments").get(GetOptions(source: source));
 
     for(var i = 0; i < querySnapshot.docs.length; i++){
-      Comment? comment = await Comment.fromId(id, querySnapshot.docs[i].id);
+      CommentData? comment = await CommentData.fromId(id, querySnapshot.docs[i].id);
       if(comment != null){
         post?.comments.add(comment);
       }
@@ -192,14 +192,14 @@ class PostData{
   }
 }
 
-class Comment{
+class CommentData{
   String uid = "";
   String content = "";
-  int likes = 0;
+  List<String> likes = [];
   String id = "";
-  List<Reply> replies;
+  List<ReplyData> replies = [];
 
-  Comment({
+  CommentData({
     required this.uid,
     required this.content,
     required this.likes,
@@ -207,16 +207,18 @@ class Comment{
     required this.replies,
   });
 
-  factory Comment.fromFirestore(
+  CommentData.empty();
+
+  factory CommentData.fromFirestore(
       DocumentSnapshot<Map<String, dynamic>> snapshot,
       SnapshotOptions? options,
       ) {
     final data = snapshot.data();
 
-    return Comment(
+    return CommentData(
       uid: data?['uid'],
       content: data?['content'],
-      likes: data?['likes'],
+      likes: List.from(data?['likes']),
       id: snapshot.id,
       replies: [],
     );
@@ -230,10 +232,10 @@ class Comment{
     };
   }
 
-  static Future<Comment?> fromId(String postID, String commentID) async{
+  static Future<CommentData?> fromId(String postID, String commentID) async{
     final ref = db.collection("posts").doc(postID).collection("comments").doc(commentID).withConverter(
-      fromFirestore: Comment.fromFirestore,
-      toFirestore: (Comment comment, _) => comment.toFirestore(),
+      fromFirestore: CommentData.fromFirestore,
+      toFirestore: (CommentData comment, _) => comment.toFirestore(),
     );
     var docSnap = await ref.get(GetOptions(source: source));
     final comment = docSnap.data(); // Convert to User object
@@ -241,7 +243,7 @@ class Comment{
     QuerySnapshot querySnapshot = await ref.collection("replies").get(GetOptions(source: source));
 
     for(var i = 0; i < querySnapshot.docs.length; i++){
-      Reply? reply = await Reply.fromId(postID, commentID, querySnapshot.docs[i].id);
+      ReplyData? reply = await ReplyData.fromId(postID, commentID, querySnapshot.docs[i].id);
       if(reply != null){
         comment?.replies.add(reply);
       }
@@ -251,23 +253,23 @@ class Comment{
   }
 }
 
-class Reply{
+class ReplyData{
   String uid = "";
   String content = "";
   String id = "";
 
-  Reply({
+  ReplyData({
     required this.uid,
     required this.content,
     required this.id,
   });
 
-  factory Reply.fromFirestore(
+  factory ReplyData.fromFirestore(
       DocumentSnapshot<Map<String, dynamic>> snapshot,
       SnapshotOptions? options,
       ) {
     final data = snapshot.data();
-    return Reply(
+    return ReplyData(
       uid: data?['uid'],
       content: data?['content'],
       id: snapshot.id,
@@ -281,10 +283,10 @@ class Reply{
     };
   }
 
-  static Future<Reply?> fromId(String postID, String commentID, String replyID) async{
+  static Future<ReplyData?> fromId(String postID, String commentID, String replyID) async{
     final ref = db.collection("posts").doc(postID).collection("comments").doc(commentID).collection("replies").doc(replyID).withConverter(
-      fromFirestore: Reply.fromFirestore,
-      toFirestore: (Reply comment, _) => comment.toFirestore(),
+      fromFirestore: ReplyData.fromFirestore,
+      toFirestore: (ReplyData comment, _) => comment.toFirestore(),
     );
     var docSnap = await ref.get(GetOptions(source: source));
     final reply = docSnap.data(); // Convert to User object
