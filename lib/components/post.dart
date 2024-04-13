@@ -17,7 +17,8 @@ import 'loading.dart';
 
 class Post extends StatefulWidget {
   final String id;
-  const Post({super.key, required this.id});
+  final void Function() onDelete;
+  const Post({super.key, required this.id, required this.onDelete});
 
   @override
   State<Post> createState() => _PostState();
@@ -103,11 +104,32 @@ class _PostState extends State<Post> {
                     ),
                     SizedBox(width: 12),
                     Icon(Icons.share),
+                    SizedBox(width: 12),
+                    GestureDetector(
+                      onTap: (){
+                        data.delete();
+                        widget.onDelete();
+                      },
+                        child: Icon(Icons.delete_outline)
+                    ),
                     //SizedBox(width: 10),
                   ],
                 ),
               ),
               Description(user: data.user.fullName, content: data.description),
+              SizedBox(height: 12,),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Container(
+                  height: 2,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary.withOpacity(0.25),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              SizedBox(height: 12,),
             ],
           );
         }else{

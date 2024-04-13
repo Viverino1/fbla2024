@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fbla2024/app_colors.dart';
-import 'package:fbla2024/pages/academics.dart';
+import 'package:fbla2024/pages/academics_page.dart';
 import 'package:fbla2024/pages/class_details.dart';
 import 'package:fbla2024/pages/comment_section.dart';
 import 'package:fbla2024/pages/home_page.dart';

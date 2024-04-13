@@ -1,5 +1,6 @@
 import 'package:fbla2024/pages/feed_page.dart';
 import 'package:fbla2024/pages/portfolio_page.dart';
+import 'package:fbla2024/pages/search_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -17,7 +18,7 @@ class _HomePageState extends State<HomePage> {
   int pageIndex = 0;
   final pages = [
     const FeedPage(),
-    const Scaffold(),
+    const SearchPage(),
     NewPost(),
     const PortfolioPage(),
   ];

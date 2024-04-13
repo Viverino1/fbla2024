@@ -3,7 +3,7 @@
 import 'package:fbla2024/components/loading.dart';
 import 'package:fbla2024/components/post.dart';
 import 'package:fbla2024/main.dart';
-import 'package:fbla2024/pages/academics.dart';
+import 'package:fbla2024/pages/academics_page.dart';
 import 'package:fbla2024/services/firebase/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -144,7 +144,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
                   height: 2,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.secondary.withOpacity(0.25),
+                    color: Theme.of(context).colorScheme.primary.withOpacity(0.25),
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
@@ -155,7 +155,11 @@ class _PortfolioPageState extends State<PortfolioPage> {
                   builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot){
                     List<Widget> children;
                     if(snapshot.hasData){
-                      children = snapshot.data?.map((e) => Post(id: e,)).toList()?? [];
+                      children = snapshot.data?.map((e) => Post(id: e, onDelete: (){
+                        setState(() {
+                          snapshot.data?.removeWhere((element) => element == e);
+                        });
+                      },)).toList()?? [];
                     }else{
                       children = <Widget>[
                         Loading("Posts"),

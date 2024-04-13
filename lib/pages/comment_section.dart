@@ -58,110 +58,117 @@ class _CommentSectionState extends State<CommentSection> {
         ),
         toolbarHeight: 40,
       ),
-      body: Column(
-        children: [
-          SingleChildScrollView(
-            child: Column(
-              children: widget.comments.map((e) => Comment(
-                data: e,
-                onReply: (name){
-                  setState(() {
-                    _replyToId = e.id;
-                    _replyToName = name;
-                  });
-                },
-                onDelete: (){
-                  setState(() {
-                    widget.comments.removeWhere((element) => element.id == e.id);
-                  });
-                },
-              )).toList(),
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).requestFocus(new FocusNode());
+        },
+        child: Column(
+          children: [
+            SingleChildScrollView(
+              child: Column(
+                children: widget.comments.map((e) => Comment(
+                  data: e,
+                  onReply: (name){
+                    setState(() {
+                      _replyToId = e.id;
+                      _replyToName = name;
+                    });
+                  },
+                  onDelete: (){
+                    setState(() {
+                      widget.comments.removeWhere((element) => element.id == e.id);
+                    });
+                  },
+                )).toList(),
+              ),
             ),
-          ),
-          Spacer(),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      _replyToName != ""? "Replying to " + _replyToName : "",
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    Spacer(),
-                    GestureDetector(
-                      onTap: () => setState(() {
-                        _replyToName = "";
-                        _replyToId = "";
-                      }),
-                      child: Container(
-                        height: 24,
-                        width: 24,
-                        child: Icon(
-                            Icons.close,
-                          size: 16,
-                          color: Theme.of(context).colorScheme.background,
+            Spacer(),
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        _replyToName != ""? "Replying to " + _replyToName : "",
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      Spacer(),
+                      GestureDetector(
+                        onTap: () => setState(() {
+                          _replyToName = "";
+                          _replyToId = "";
+                        }),
+                        child: Container(
+                          height: 24,
+                          width: 24,
+                          child: Icon(
+                              Icons.close,
+                            size: 16,
+                            color: Theme.of(context).colorScheme.background,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _replyToId == ""? Colors.transparent : Theme.of(context).colorScheme.secondary,
+                            borderRadius: BorderRadius.circular(50),
+                          ),
                         ),
-                        decoration: BoxDecoration(
-                          color: _replyToId == ""? Colors.transparent : Theme.of(context).colorScheme.secondary,
-                          borderRadius: BorderRadius.circular(50),
+                      )
+                    ],
+                  ),
+                  SizedBox(height: 8,),
+                  SizedBox(
+                    height: 40,
+                    child: TextField(
+                      //focusNode: inputNode,
+                      controller: fieldText,
+                      onSubmitted: (text){
+                        fieldText.clear();
+
+                       if(text.isNotEmpty){
+                         if(_replyToId == ""){
+                           widget.postData.addComment(widget.postData.id, text);
+                         }else{
+                           widget.postData.comments[widget.postData.comments.indexWhere((element) => element.id == _replyToId)]
+                               .addReply(widget.postData.id, _replyToId, text);
+                         }
+                       }
+
+                        setState(() {
+                          _replyToId = "";
+                          _replyToName = "";
+                        });
+                      },
+                      cursorColor: Theme.of(context).colorScheme.secondary,
+                      style: GoogleFonts.quicksand(
+                        color: Theme.of(context).colorScheme.secondary,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                        height: 1,
+                      ),
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                            borderSide: BorderSide.none
                         ),
-                      ),
-                    )
-                  ],
-                ),
-                SizedBox(height: 8,),
-                SizedBox(
-                  height: 40,
-                  child: TextField(
-                    //focusNode: inputNode,
-                    controller: fieldText,
-                    onSubmitted: (text){
-                      fieldText.clear();
+                        filled: true,
+                        hintStyle: GoogleFonts.quicksand(
+                            color: Theme.of(context).colorScheme.secondary,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16
 
-                      if(_replyToId == ""){
-                        widget.postData.addComment(widget.postData.id, text);
-                      }else{
-                        widget.postData.comments[widget.postData.comments.indexWhere((element) => element.id == _replyToId)]
-                            .addReply(widget.postData.id, _replyToId, text);
-                      }
-
-                      setState(() {
-                        _replyToId = "";
-                        _replyToName = "";
-                      });
-                    },
-                    cursorColor: Theme.of(context).colorScheme.secondary,
-                    style: GoogleFonts.quicksand(
-                      color: Theme.of(context).colorScheme.secondary,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
-                      height: 1,
-                    ),
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(horizontal: 16),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                          borderSide: BorderSide.none
+                        ),
+                        hintText: "Add a comment",
+                        fillColor: Theme.of(context).colorScheme.secondary.withOpacity(0.2),
                       ),
-                      filled: true,
-                      hintStyle: GoogleFonts.quicksand(
-                          color: Theme.of(context).colorScheme.secondary,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16
-
-                      ),
-                      hintText: "Add a comment",
-                      fillColor: Theme.of(context).colorScheme.secondary.withOpacity(0.2),
                     ),
                   ),
-                ),
-              ],
-            )
-          ),
-        ]
+                ],
+              )
+            ),
+          ]
+        ),
       ),
     );
   }

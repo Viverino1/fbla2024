@@ -1,6 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import 'loading.dart';
 
 class Carousel extends StatefulWidget {
   final List<String> urls;
@@ -57,22 +60,39 @@ class MyImage extends StatelessWidget {
   const MyImage({super.key, required this.url});
 
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: AspectRatio(
-          aspectRatio: 1.5 / 1,
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  alignment: FractionalOffset.center,
-                  image: NetworkImage(url),
-                )
-            ),
-          ),
-        ),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: CachedNetworkImage(
+        key: UniqueKey(),
+        imageUrl: url,
+        height: 200,
+        width: 300,
+        fit: BoxFit.cover,
+        // progressIndicatorBuilder: (context, url, downloadProgress) =>
+        //     Padding(
+        //       padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 55),
+        //       child: CircularProgressIndicator(value: downloadProgress.progress),
+        //     ),
       ),
     );
+
+    // precacheImage(NetworkImage(url), context);
+    // return Scaffold(
+    //   body: Center(
+    //     child: AspectRatio(
+    //       aspectRatio: 1.5 / 1,
+    //       child: Container(
+    //         decoration: BoxDecoration(
+    //           borderRadius: BorderRadius.circular(20),
+    //             image: DecorationImage(
+    //               fit: BoxFit.cover,
+    //               alignment: FractionalOffset.center,
+    //               image: NetworkImage(url),
+    //             )
+    //         ),
+    //       ),
+    //     ),
+    //   ),
+    // );
   }
 }

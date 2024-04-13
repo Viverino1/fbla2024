@@ -1,9 +1,13 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fbla2024/main.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 FirebaseFirestore db = FirebaseFirestore.instance;
 
-const Source source = Source.server;
+const Source source = Source.cache;
 
 class UserData {
   int dob = 0;
@@ -159,6 +163,10 @@ class PostData{
       like: () => {},
         unLike: () => {}
     );
+  }
+
+  void delete(){
+    db.collection("posts").doc(id).delete();
   }
 
   Map<String, dynamic> toFirestore() {
@@ -444,5 +452,33 @@ class FirestoreService{
     });
 
     return docRef.id;
+  }
+  
+  static Future<PostData> createPost(PostData postData)async {
+    final docRef = db.collection("posts").doc();
+    postData.id = docRef.id;
+
+    for(int i = 0; i < postData.urls.length; i++){
+      final storageRef = FirebaseStorage.instance.ref().child("${postData.id}/image${i}.png");
+      File file = File(postData.urls[i]);
+      await storageRef.putFile(file);
+      postData.urls[i] = await storageRef.getDownloadURL();
+    }
+
+    postData.uid = currentUser.uid;
+    postData.postTime = (DateTime.now().millisecondsSinceEpoch / 1000).toInt();
+    postData.user = currentUser;
+
+    docRef.set({
+      "description": postData.description,
+      "likes": postData.likes,
+      "postTime": postData.postTime,
+      "title": postData.title,
+      "type": postData.type,
+      "uid": postData.uid,
+      "urls": postData.urls,
+    });
+
+    return postData;
   }
 }
