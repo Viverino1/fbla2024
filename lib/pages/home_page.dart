@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../components/nav_bar.dart';
+import 'new_post.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,7 +18,7 @@ class _HomePageState extends State<HomePage> {
   final pages = [
     const FeedPage(),
     const Scaffold(),
-    const Scaffold(),
+    NewPost(),
     const PortfolioPage(),
   ];
 

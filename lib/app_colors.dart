@@ -6,10 +6,25 @@ class AppColors {
   static final backgroundGray = Color.fromARGB(255, 34, 34, 34);
   static final offWhite = Color.fromARGB(255, 239, 239, 239);
   static final gray = Colors.white60;
-  static final primary = Colors.teal.shade300;
+  static final primary = Colors.green.shade300;
 }
 
 ThemeData lightMode = ThemeData(
+    textTheme: TextTheme(
+      titleLarge: GoogleFonts.dmSerifDisplay(
+        fontWeight: FontWeight.w600,
+        fontSize: 22,
+      ),
+      titleMedium: GoogleFonts.quicksand(
+        fontSize: 16,
+        fontWeight: FontWeight.w800,
+      ),
+      titleSmall: GoogleFonts.quicksand(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: AppColors.backgroundGray
+      ),
+    ),
     brightness: Brightness.light,
     colorScheme: ColorScheme.light(
       background: AppColors.offWhite,

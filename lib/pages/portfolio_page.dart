@@ -3,6 +3,8 @@
 import 'package:fbla2024/components/loading.dart';
 import 'package:fbla2024/components/post.dart';
 import 'package:fbla2024/main.dart';
+import 'package:fbla2024/pages/academics.dart';
+import 'package:fbla2024/services/firebase/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import '../components/button.dart';
 import 'package:fbla2024/services/firebase/firestore/db.dart';
+
+import '../services/gemini/gemini.dart';
 
 class PortfolioPage extends StatefulWidget {
   const PortfolioPage({super.key});
@@ -44,7 +48,10 @@ class _PortfolioPageState extends State<PortfolioPage> {
               Spacer(),
               Icon(Icons.share),
               SizedBox(width: 12,),
-              Icon(Icons.settings)
+              GestureDetector(
+                onTap: AuthService().signInWithGoogle,
+                  child: Icon(Icons.settings)
+              )
             ],
           ),
         ),
@@ -99,25 +106,32 @@ class _PortfolioPageState extends State<PortfolioPage> {
                   Button(
                     icon: Icons.hub,
                     text: "Network",
-                    onTap: () => {},
+                    onTap: () => {
+                      Gemini.sendMessage("msg")
+                    },
                   ),
                   Container(
                     height: 30,
                     width: 30,
                     decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.secondary,
+                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(30)
                     ),
                     child: Icon(
                       Icons.question_mark,
                       size: 20,
-                      color: Theme.of(context).colorScheme.background,
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                   ),
                   Button(
                     icon: Icons.school,
                     text: "Academics",
-                    onTap: () => {},
+                    onTap: () => {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Academics(user: currentUser))
+                      )
+                    },
                     iconSize: 18,
                   ),
 
@@ -151,7 +165,8 @@ class _PortfolioPageState extends State<PortfolioPage> {
                       children: children,
                     );
                   }
-              )
+              ),
+              SizedBox(height: 30,)
             ],
           ),
         ),

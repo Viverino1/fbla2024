@@ -33,84 +33,82 @@ class _PostState extends State<Post> {
         if(snapshot.hasData && possiblyNull != null){
           PostData data = possiblyNull;
           DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(data.postTime * 1000).toLocal();
-          return Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Row(
-                    children: [
-                      UserImage(uid: data.user.uid),
-                      SizedBox(width: 10),
-                      Flexible(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Title(text: data.title,),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  data.type,
-                                  style: Theme.of(context).textTheme.titleSmall,
-                                ),
-                                SizedBox(width: 8,),
-                                Container(
-                                  height: 4,
-                                  width: 4,
-                                  decoration: BoxDecoration(
-                                      color: Theme.of(context).colorScheme.secondary,
-                                      borderRadius: BorderRadius.circular(10)
-                                  ),
-                                ),
-                                SizedBox(width: 8,),
-                                Text(
-                                  dateTime.month.toString() + "/" + dateTime.day.toString() + "/" + dateTime.year.toString(),
-                                  style: Theme.of(context).textTheme.titleSmall,
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Carousel(
-                  urls: data.urls,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Row(
-                    children: [
-                      Likes(
-                        likes: data.likes,
-                        like: data.like,
-                        unLike: data.unLike,
-                        isLiked: data.likes.contains(currentUser.uid),
-                      ),
-                      Spacer(),
-                      GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => CommentSection(comments: data.comments,),
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Row(
+                  children: [
+                    UserImage(uid: data.user.uid),
+                    SizedBox(width: 10),
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Title(text: data.title,),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                data.type,
+                                style: Theme.of(context).textTheme.titleSmall,
                               ),
-                            );
-                          },
-                          child: Icon(Icons.add_comment_outlined)
+                              SizedBox(width: 8,),
+                              Container(
+                                height: 4,
+                                width: 4,
+                                decoration: BoxDecoration(
+                                    color: Theme.of(context).colorScheme.secondary,
+                                    borderRadius: BorderRadius.circular(10)
+                                ),
+                              ),
+                              SizedBox(width: 8,),
+                              Text(
+                                dateTime.month.toString() + "/" + dateTime.day.toString() + "/" + dateTime.year.toString(),
+                                style: Theme.of(context).textTheme.titleSmall,
+                              ),
+                            ],
+                          )
+                        ],
                       ),
-                      SizedBox(width: 12),
-                      Icon(Icons.share),
-                      //SizedBox(width: 10),
-                    ],
-                  ),
+                    )
+                  ],
                 ),
-                Description(user: data.user.fullName, content: data.description),
-              ],
-            ),
+              ),
+              Carousel(
+                urls: data.urls,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Row(
+                  children: [
+                    Likes(
+                      likes: data.likes,
+                      like: data.like,
+                      unLike: data.unLike,
+                      isLiked: data.likes.contains(currentUser.uid),
+                    ),
+                    Spacer(),
+                    GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CommentSection(comments: data.comments, postData: data,),
+                            ),
+                          );
+                        },
+                        child: Icon(Icons.add_comment_outlined)
+                    ),
+                    SizedBox(width: 12),
+                    Icon(Icons.share),
+                    //SizedBox(width: 10),
+                  ],
+                ),
+              ),
+              Description(user: data.user.fullName, content: data.description),
+            ],
           );
         }else{
           return Loading("Post");
@@ -194,7 +192,7 @@ class Likes extends StatefulWidget {
   final List<String> likes;
   final void Function() like;
   final void Function() unLike;
-  bool isLiked;
+  final bool isLiked;
 
   @override
   State<Likes> createState() => _LikesState();

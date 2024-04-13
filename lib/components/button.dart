@@ -17,16 +17,16 @@ class Button extends StatelessWidget {
         height: 30,
         width: 130,
         decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.secondary,
+            color: Theme.of(context).colorScheme.secondary.withOpacity(0.2),
             borderRadius: BorderRadius.circular(20)
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           //crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(icon, size: iconSize?? 16, color: Theme.of(context).colorScheme.background,),
+            Icon(icon, size: iconSize?? 16, color: Theme.of(context).colorScheme.secondary),
             SizedBox(width: 8,),
-            Text(text, style: GoogleFonts.quicksand(fontSize: 14, color: Theme.of(context).colorScheme.background, fontWeight: FontWeight.w700), softWrap: true,),
+            Text(text, style: GoogleFonts.quicksand(fontSize: 14, color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.w700), softWrap: true,),
           ],
         ),
       ),

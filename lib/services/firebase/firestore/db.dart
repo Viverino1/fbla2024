@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fbla2024/main.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:flutter/cupertino.dart';
 FirebaseFirestore db = FirebaseFirestore.instance;
 
 const Source source = Source.server;
@@ -12,7 +11,7 @@ class UserData {
   String lastName = "";
   String email = "";
   int gradYear = 0;
-  int grade = 0;
+  double grade = 0.0;
   String photoUrl = "";
   int preact = 0;
   int act = 0;
@@ -50,13 +49,14 @@ class UserData {
       SnapshotOptions? options,
       ) {
     final data = snapshot.data();
+    int gradeAsInt = (data?['grade']);
     return UserData(
       dob: data?['dob'],
       firstName: data?['firstName'],
       lastName: data?['lastName'],
       email: data?['email'],
       gradYear: data?['gradYear'],
-      grade: data?['grade'],
+      grade: gradeAsInt.toDouble(),
       photoUrl: data?['photoUrl'],
       preact: data?['preact'],
       act: data?['act'],
@@ -110,8 +110,18 @@ class PostData{
   List<String> urls = [];
   List<CommentData> comments = [];
 
-  void Function() like;
-  void Function() unLike;
+  void Function() like = () => {};
+  void Function() unLike = () => {};
+
+  void addComment(String postID, String content) async{
+    final ref = db.collection("posts").doc(postID).collection("comments").doc();
+    comments.add(CommentData(uid: currentUser.uid, content: content, likes: [], id: ref.id, replies: []));
+    await ref.set({
+      "content": content,
+      "likes": [],
+      "uid": currentUser.uid,
+    });
+  }
 
   PostData({
     required this.description,
@@ -127,6 +137,8 @@ class PostData{
     required this.like,
     required this.unLike,
   });
+
+  PostData.empty();
 
   factory PostData.fromFirestore(
       DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -199,6 +211,22 @@ class CommentData{
   String id = "";
   List<ReplyData> replies = [];
 
+  void like () async {
+    await docRef?.update({ 'likes': FieldValue.arrayUnion([currentUser.uid]) });
+    //likes.add(currentUser.uid);
+  }
+
+  void unLike () async {
+    await docRef?.update({ 'likes': FieldValue.arrayRemove([currentUser.uid]) });
+    //likes.remove(currentUser.uid);
+  }
+
+  void delete() async {
+    await docRef?.delete();
+  }
+
+  DocumentReference? docRef;
+
   CommentData({
     required this.uid,
     required this.content,
@@ -249,7 +277,18 @@ class CommentData{
       }
     }
 
+    comment?.docRef = ref;
+
     return comment;
+  }
+
+  void addReply(String postID, String commentID, String content) async{
+    final ref = db.collection("posts").doc(postID).collection("comments").doc(commentID).collection("replies").doc();
+    replies.add(ReplyData(uid: currentUser.uid, content: content, id: ref.id));
+    await ref.set({
+      "content": content,
+      "uid": currentUser.uid,
+    });
   }
 }
 
@@ -257,6 +296,12 @@ class ReplyData{
   String uid = "";
   String content = "";
   String id = "";
+
+  void delete() async {
+    await docRef?.delete();
+  }
+
+  DocumentReference? docRef;
 
   ReplyData({
     required this.uid,
@@ -290,7 +335,53 @@ class ReplyData{
     );
     var docSnap = await ref.get(GetOptions(source: source));
     final reply = docSnap.data(); // Convert to User object
+    reply?.docRef = ref;
     return reply;
+  }
+}
+
+class ClassData{
+  String id = "";
+  String name = "";
+  bool isAp = false;
+  bool isHonors = false;
+  double grade = 0;
+  double score = 0;
+  int sem = 1;
+
+  void delete() async {
+    db.collection("users").doc(currentUser.uid).collection("classes").doc(id).delete();
+  }
+
+  DocumentReference? docRef;
+
+  ClassData({
+    required this.id,
+    required this.name,
+    required this.isAp,
+    required this.isHonors,
+    required this.grade,
+    required this.score,
+    required this.sem,
+  });
+
+  ClassData.empty();
+
+  static Future<ClassData?> fromId(String uid, String id) async{
+    final publicData = await (await db.collection("classes").doc(id).get(GetOptions(source: source))).data();
+    final privateData = await (await db.collection("users").doc(uid).collection("classes").doc(id).get(GetOptions(source: source))).data();
+
+    ClassData classdata = ClassData(
+        id: id,
+        name: publicData?["name"],
+        isAp: publicData?["isAp"],
+        isHonors: privateData?["isHonors"],
+        grade: privateData?["grade"].toDouble(),
+        score: privateData?["score"],
+        sem: privateData?["sem"],
+    );
+
+    return classdata;
   }
 }
 
@@ -298,5 +389,60 @@ class FirestoreService{
   static Future<List<String>> getUserPostIDs(String uid) async{
     final querySnap = await db.collection("posts").where("uid", isEqualTo: uid).get(GetOptions(source: source));
     return querySnap.docs.map((e) => e.id).toList();
+  }
+
+  static Future<List<ClassData>> getUserClasses(String uid) async{
+    List<ClassData> classes = [];
+
+    final classDocs = await db.collection("users").doc(uid).collection("classes").get();
+
+    for(int i = 0; i < classDocs.docs.length; i++){
+      final classData = await ClassData.fromId(uid, classDocs.docs[i].id);
+      if(classData != null){
+        classes.add(classData);
+      }
+    }
+
+    return classes;
+  }
+
+  static Future<List<ClassData>> getPublicClasses() async {
+    List<ClassData> classes = [];
+
+    final classDocs = await db.collection("classes").get(GetOptions(source: source));
+
+    for(int i = 0; i < classDocs.docs.length; i++){
+      final classData = ClassData.empty();
+
+      final data = classDocs.docs[i].data();
+
+      classData.id = classDocs.docs[i].id;
+      classData.name = data["name"];
+      classData.isAp = data["isAp"];
+
+      classes.add(classData);
+    }
+
+    return classes;
+  }
+
+  static void addClass(ClassData classData){
+    db.collection("users").doc(currentUser.uid).collection("classes").doc(classData.id).set({
+      "isHonors": classData.isHonors,
+      "score": classData.score,
+      "grade": classData.grade,
+      "sem": classData.sem,
+    });
+  }
+
+  static String addPublicClass(ClassData classData){
+    final docRef = db.collection("classes").doc();
+    classData.id = docRef.id;
+    docRef.set({
+      "isAp" : classData.isAp,
+      "name": classData.name,
+    });
+
+    return docRef.id;
   }
 }

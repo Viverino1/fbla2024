@@ -33,7 +33,6 @@ class UserImage extends StatelessWidget {
                   width: 25,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(25),
-
                   ),
                 );
               }
