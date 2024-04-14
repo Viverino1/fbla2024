@@ -12,6 +12,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../main.dart';
 import '../services/firebase/firestore/db.dart';
+import '../services/share.dart';
 import 'carousel.dart';
 import 'loading.dart';
 
@@ -103,7 +104,12 @@ class _PostState extends State<Post> {
                         child: Icon(Icons.add_comment_outlined)
                     ),
                     SizedBox(width: 12),
-                    Icon(Icons.share),
+                    GestureDetector(
+                      onTap: (){
+                        Share.share();
+                      },
+                      child: Icon(Icons.share),
+                    ),
                     SizedBox(width: 12),
                     GestureDetector(
                       onTap: (){

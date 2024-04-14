@@ -1,6 +1,9 @@
+import 'package:fbla2024/services/firebase/auth_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import '../services/share.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -33,7 +36,12 @@ class SettingsPage extends StatelessWidget {
 
       body: Column(
         children: [
-
+          IconButton(onPressed: (){
+            AuthService().signInWithGoogle();
+          }, icon: Icon(Icons.person_2)),
+          IconButton(onPressed: (){
+            Share.share();
+          }, icon: Icon(Icons.person_2))
         ],
       ),
     );

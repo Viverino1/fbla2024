@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:snapkit/snapkit.dart';
 import 'firebase_options.dart';
 
 UserData currentUser = UserData.empty();
@@ -39,7 +40,7 @@ Future<void> main() async {
 
 const backgroundColor = Color.fromARGB(255, 34, 34, 34);
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatelessWidget implements SnapchatAuthStateListener {
   const MyApp({super.key});
 
   @override
@@ -61,6 +62,16 @@ class MyApp extends StatelessWidget {
         '/settings': (context) => SettingsPage(),
       },
     );
+  }
+
+  @override
+  void onLogin(SnapchatUser user) {
+
+  }
+
+  @override
+  void onLogout() {
+
   }
 }
 

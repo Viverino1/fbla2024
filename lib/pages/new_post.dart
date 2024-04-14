@@ -31,7 +31,7 @@ class NewPost extends StatelessWidget {
           child: Row(
             children: [
               Text(
-                "New Post",
+                "New Update",
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               Spacer(),
