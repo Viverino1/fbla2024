@@ -1,13 +1,11 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fbla2024/main.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 FirebaseFirestore db = FirebaseFirestore.instance;
 
-const Source source = Source.cache;
+const Source source = Source.server;
 
 class UserData {
   int dob = 0;
@@ -20,6 +18,7 @@ class UserData {
   int preact = 0;
   int act = 0;
   int psat = 0;
+  double gpa = 0;
   int sat = 0;
   String uid = "";
   String school = "";
@@ -43,6 +42,7 @@ class UserData {
     required this.school,
     required this.following,
     required this.fullName,
+    required this.gpa,
     //required this.followers,
   });
 
@@ -60,12 +60,13 @@ class UserData {
       lastName: data?['lastName'],
       email: data?['email'],
       gradYear: data?['gradYear'],
-      grade: gradeAsInt.toDouble(),
+      grade: data?['grade'].toDouble(),
       photoUrl: data?['photoUrl'],
       preact: data?['preact'],
       act: data?['act'],
       sat: data?['sat'],
       psat: data?['psat'],
+      gpa: data?['gpa'].toDouble(),
       uid: snapshot.id,
       school: data?['school'],
       fullName: data?['firstName'] + " " + data?['lastName'],
@@ -480,5 +481,20 @@ class FirestoreService{
     });
 
     return postData;
+  }
+
+  static Future<List<UserData>> getAllUsers() async{
+    List<UserData> users = [];
+
+    final docs = (await db.collection("users").get(GetOptions(source: source))).docs;
+
+    for(int i = 0; i < docs.length; i++){
+      UserData? user = await UserData.fromId(docs[i].id);
+      if(user != null){
+        users.add(user);
+      }
+    }
+
+    return users;
   }
 }

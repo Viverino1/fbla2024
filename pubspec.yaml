@@ -48,6 +48,8 @@ dependencies:
   dropdown_textfield: ^1.0.8
   firebase_storage: ^11.7.1
   cached_network_image: ^3.3.1
+  smooth_page_indicator: ^1.1.0
+  social_share: ^2.3.1
 
 dev_dependencies:
   flutter_test:

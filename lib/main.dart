@@ -3,9 +3,12 @@ import 'package:fbla2024/app_colors.dart';
 import 'package:fbla2024/pages/academics_page.dart';
 import 'package:fbla2024/pages/class_details.dart';
 import 'package:fbla2024/pages/comment_section.dart';
+import 'package:fbla2024/pages/hero_page.dart';
 import 'package:fbla2024/pages/home_page.dart';
 import 'package:fbla2024/pages/network.dart';
 import 'package:fbla2024/pages/new_post.dart';
+import 'package:fbla2024/pages/settings_page.dart';
+import 'package:fbla2024/pages/user_details.dart';
 import 'package:fbla2024/services/firebase/auth_service.dart';
 import 'package:fbla2024/services/firebase/firestore/db.dart';
 import 'package:fbla2024/services/gemini/gemini.dart';
@@ -46,7 +49,7 @@ class MyApp extends StatelessWidget {
       darkTheme: darkMode,
       themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
-      home: const HomePage(),
+      home: true? HomePage() : HeroPage(),
       routes: {
         '/home': (context) => const HomePage(),
         '/view-profile': (context) => const Scaffold(),
@@ -54,6 +57,8 @@ class MyApp extends StatelessWidget {
         '/academics': (context) => Academics(user: currentUser,),
         '/class-details': (context) => ClassDetails(data: ClassData.empty(), user: currentUser,),
         '/network': (context) => Network(uid: currentUser.uid),
+        '/user-details': (context) => UserDetailsPage(userData: currentUser),
+        '/settings': (context) => SettingsPage(),
       },
     );
   }

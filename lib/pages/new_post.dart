@@ -11,7 +11,7 @@ import 'package:image_input/widget/image_input.dart';
 class NewPost extends StatelessWidget {
   NewPost({super.key});
 
-  List<XFile> images = [];
+  final List<XFile> images = [];
   final PostData postData = PostData.empty();
 
   @override

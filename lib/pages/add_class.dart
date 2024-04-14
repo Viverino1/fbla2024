@@ -88,6 +88,7 @@ class _AddClassState extends State<AddClass> {
                       actions: [
                         TextButton(onPressed: () => {Navigator.pop(context)}, child: Text("Cancel", style: Theme.of(context).textTheme.titleMedium,),),
                         TextButton(onPressed: () {
+                          Navigator.pop(context);
                           isApPopup();
                         }, child: Text("Confirm", style: Theme.of(context).textTheme.titleMedium,),),
                       ],

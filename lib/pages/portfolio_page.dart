@@ -4,6 +4,8 @@ import 'package:fbla2024/components/loading.dart';
 import 'package:fbla2024/components/post.dart';
 import 'package:fbla2024/main.dart';
 import 'package:fbla2024/pages/academics_page.dart';
+import 'package:fbla2024/pages/settings_page.dart';
+import 'package:fbla2024/pages/user_details.dart';
 import 'package:fbla2024/services/firebase/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -48,10 +50,12 @@ class _PortfolioPageState extends State<PortfolioPage> {
               Spacer(),
               Icon(Icons.share),
               SizedBox(width: 12,),
-              GestureDetector(
-                onTap: AuthService().signInWithGoogle,
-                  child: Icon(Icons.settings)
-              )
+              IconButton(onPressed: (){
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SettingsPage())
+                  );
+                }, icon: Icon(Icons.settings))
             ],
           ),
         ),
@@ -110,17 +114,25 @@ class _PortfolioPageState extends State<PortfolioPage> {
                       Gemini.sendMessage("msg")
                     },
                   ),
-                  Container(
-                    height: 30,
-                    width: 30,
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(30)
-                    ),
-                    child: Icon(
-                      Icons.question_mark,
-                      size: 20,
-                      color: Theme.of(context).colorScheme.secondary,
+                  GestureDetector(
+                    onTap: (){
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => UserDetailsPage(userData: currentUser))
+                      );
+                    },
+                    child: Container(
+                      height: 30,
+                      width: 30,
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.secondary.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(30)
+                      ),
+                      child: Icon(
+                        Icons.question_mark,
+                        size: 20,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
                     ),
                   ),
                   Button(
